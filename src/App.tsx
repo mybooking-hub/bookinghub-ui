@@ -8,6 +8,7 @@ import DefaultLayout from "layout/default.layout";
 import ContactScreen from "screens/contact.screen";
 import BrowsePerformance from "screens/browser.performance.screen";
 import BookPerformance from "screens/book.performance.screen";
+import AuthenticationForm from "screens/authentication.screen";
 
 const MainScreenApp = lazy(() => import("screens/main.screen"))
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/browse-performance" element={<BrowsePerformance />} />
           <Route path="/browse-performance/booking" element={<BookPerformance />} />
           <Route path="/contact-us" element={<ContactScreen />} />
+          <Route path="/authenticate" element={<AuthenticationForm />} />
           <Route path="/not-found" element={<ErrorBoundaryUI />} />
           <Route path="*" element={<Navigate to="/not-found" replace />} />
         </Route>

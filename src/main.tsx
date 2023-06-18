@@ -11,16 +11,27 @@ import ErrorBoundaryUI from "src/fallback-ui/errorboundary.ui.tsx";
 import { MantineProvider, createEmotionCache } from "@mantine/core";
 const myCache = createEmotionCache({ key: 'mantine', prepend: false });
 
-const queryClient = new QueryClient();
+import { Notifications, notifications } from "@mantine/notifications";
+
+export const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <ErrorBoundary FallbackComponent={({ error, resetErrorBoundary }) => {
+          notifications.show({
+            title: 'Error !',
+            message: error,
+            autoClose: false,
+            withBorder: true,
+            withCloseButton: true,
+            color: 'red'
+          })
           return <ErrorBoundaryUI error={error} resetHandler={resetErrorBoundary} />
         }}>
           <MantineProvider withCSSVariables withNormalizeCSS withGlobalStyles emotionCache={myCache}>
+            <Notifications />
             <App />
           </MantineProvider>
         </ErrorBoundary>

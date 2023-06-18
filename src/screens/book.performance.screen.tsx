@@ -110,7 +110,7 @@ export default function BookPerformance() {
     // const params = useParams();
     const { pathname, state } = useLocation();
     const { classes } = useStyles();
-    const navigate = useNavigate();
+    const navigate = useNavigate()
 
     if (!state?.pId) {
         return <Navigate to="/not-found" />
@@ -129,7 +129,7 @@ export default function BookPerformance() {
     }
 
     if (error) {
-        navigate('/not-found');
+        return <Navigate to='/not-found' />
     }
 
     return (

@@ -14,7 +14,8 @@
       "hooks/*": ["src/hooks/*"],
       "fallback-ui/*": ["src/fallback-ui/*"],
       "screens/*": ["src/screens/*", "src/screens/"],
-      "layout/*": ["src/layout/*", "src/layout/"]
+      "layout/*": ["src/layout/*", "src/layout/"],
+      "component/*": ["src/components/*", "src/component/"]
     },
 
     /* Bundler mode */

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
     createStyles,
     Avatar,
@@ -8,7 +8,8 @@ import {
     Menu,
     rem,
     px,
-    Button
+    Button,
+    Loader
 } from '@mantine/core';
 import {
     IconLogout,
@@ -21,7 +22,9 @@ import {
     IconSwitchHorizontal,
     IconChevronDown,
 } from '@tabler/icons-react';
-import { useGetAuthStat } from "src/api/auth.api";
+import { useGetAuthStat, useSignOut } from "src/api/auth.api";
+import { useNavigate } from "react-router-dom";
+import { queryClient } from "src/main";
 
 const useStyles = createStyles((theme) => ({
     user: {
@@ -55,15 +58,38 @@ interface AuthBtnInterface {
 export default function AuthBtn({ classFlag }: AuthBtnInterface) {
     const { classes, theme, cx } = useStyles();
     const [userMenuOpened, setUserMenuOpened] = useState(false);
-    const user = {
-        name: 'John Doe', image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1180&q=80'
-    }
-    const userr = useGetAuthStat();
-    console.log('user: ', userr)
+    const navigate = useNavigate();
 
-    if (!userr) {
+    const user = useGetAuthStat();
+    // const { data: user, isLoading, error } = useGetAuthStat()
+    // console.log('Data: ', user)
+
+    const handleLogOut = async () => await useSignOut();
+
+    useEffect(() => {
+        queryClient.setQueryData(["getUserAuth"], null);
+        queryClient.invalidateQueries({ queryKey: ["getUserAuth"] });
+    }, [])
+
+    // if (error) {
+    //     return (
+    //         <Button type="button" variant="outline" >
+    //             {'ERROR: ' + error}
+    //         </Button>
+    //     )
+    // }
+
+    // if (isLoading) {
+    //     return (
+    //         <Button type="button" variant="outline" >
+    //             <Loader />
+    //         </Button>
+    //     )
+    // }
+
+    if (!user) {
         return (
-            <Button type="button" variant="filled" color="blue" >
+            <Button type="button" variant="filled" color="blue" onClick={() => navigate("/authenticate")}>
                 Sign up / Register
             </Button>
         )
@@ -84,9 +110,9 @@ export default function AuthBtn({ classFlag }: AuthBtnInterface) {
                     className={cx(classes.user, { [classes.userActive]: userMenuOpened })}
                 >
                     <Group spacing={7}>
-                        <Avatar src={user.image} alt={user.name} radius="xl" size={20} />
+                        <Avatar src={user.photoURL} alt={user.displayName ?? user.email!} radius="xl" size={20} />
                         <Text weight={500} size="sm" sx={{ lineHeight: 1 }} mr={3} color={classFlag && !userMenuOpened ? 'white' : theme.black}>
-                            {user.name}
+                            {user.displayName ?? user.email}
                         </Text>
                         {/* <IconChevronDown color={!userMenuOpened ? 'white' : theme.black} size={rem(12)} stroke={1.5} /> */}
                         <IconChevronDown color={classFlag && !userMenuOpened ? 'white' : theme.black} size={rem(12)} stroke={1.5} />
@@ -117,7 +143,7 @@ export default function AuthBtn({ classFlag }: AuthBtnInterface) {
                 {/* <Menu.Item icon={<IconSwitchHorizontal size="0.9rem" stroke={1.5} />}>
                                 Change account
                             </Menu.Item> */}
-                <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />}>Logout</Menu.Item>
+                <Menu.Item icon={<IconLogout size="0.9rem" stroke={1.5} />} onClick={handleLogOut}>Logout</Menu.Item>
 
                 {/* <Menu.Divider /> */}
 
