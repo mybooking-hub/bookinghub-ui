@@ -17,14 +17,17 @@ import {
 } from '@mantine/core';
 import { GoogleButton, TwitterButton } from "component/SocialButtons";
 
-import { useGetAuthStat, useSignInWithEmail } from 'src/api/auth.api';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useSignInWithEmail } from 'src/api/auth.api';
+import { Navigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { RootState } from 'src/redux/store';
+import { setUser } from 'src/redux/slice/auth.slice';
 
 export default function AuthenticationForm(props: PaperProps) {
     const [type, toggle] = useToggle(['login', 'register']);
     const [visible, handler] = useDisclosure(false);
-    const user = useGetAuthStat()
-    const navigate = useNavigate();
+    const user = useSelector((state: RootState) => state.auth)
+    const dispatch = useDispatch();
 
     const form = useForm({
         initialValues: {
@@ -43,11 +46,9 @@ export default function AuthenticationForm(props: PaperProps) {
     const handleAuth = async () => {
         if (type === 'login') {
             if (!visible) handler.open();
-            const stat = await useSignInWithEmail(form.values.email, form.values.password);
+            const signInUser = await useSignInWithEmail(form.values.email, form.values.password);
             handler.close();
-            if (stat) {
-                navigate(-1);
-            }
+            dispatch(setUser(signInUser?.user ?? null));
         }
         if (type === 'register') {
 
@@ -55,8 +56,7 @@ export default function AuthenticationForm(props: PaperProps) {
     }
 
     if (user) {
-        // return <Navigate to={} />
-        return navigate(-1);
+        return <Navigate to={"/"} />
     }
 
     return (

@@ -1,27 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-import { SignInMethod, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
-
-import { auth, googleProvider } from "hooks/useFirebase";
-
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, signOut } from "firebase/auth";
 import { notifications } from "@mantine/notifications";
-import { queryClient } from "src/main";
-
-const useGetAuthStat = () => {
-  return auth.currentUser;
-  // return useQuery({
-  //   queryKey: ["getUserAuth"],
-  //   queryFn: () => new Promise((res, rej) => {
-  //     if (auth.currentUser) {
-  //       res(auth.currentUser)
-  //     } else {
-  //       const error = new Error("Error getting user auth stat !")
-  //       rej(error)
-  //     }
-  //   }),
-  //   refetchOnWindowFocus: false,
-  //   // enabled: false
-  // })
-};
+// import { invalidateQueries } from "src/hooks/useRHookUtils";
+import { auth, googleProvider } from "src/hooks/useFirebase";
 
 const useSignUpWithEmail = async (email: string, password: string) => {
   notifications.show({
@@ -35,12 +15,9 @@ const useSignUpWithEmail = async (email: string, password: string) => {
     withCloseButton: false,
   })
   try {
-    const signInResponse = await createUserWithEmailAndPassword(auth, email, password);
+    const signUpResponse = await createUserWithEmailAndPassword(auth, email, password);
     notifications.hide('logging-spinner');
-    console.log('Register response: ', signInResponse);
-    // queryClient.setQueryData(["getUserAuth"], null);
-    // queryClient.invalidateQueries({ queryKey: ["getUserAuth"] });
-    useGetAuthStat();
+    return signUpResponse;
   } catch (error: any) {
     notifications.hide('logging-spinner')
     let msg = '';
@@ -78,11 +55,7 @@ const useSignInWithEmail = async (email: string, password: string) => {
   try {
     const signInResponse = await signInWithEmailAndPassword(auth, email, password);
     notifications.hide('logging-spinner');
-    console.log('Sign in response: ', signInResponse);
-    // queryClient.setQueryData(["getUserAuth"], null);
-    // queryClient.invalidateQueries({ queryKey: ["getUserAuth"] });
-    useGetAuthStat();
-    return true;
+    return signInResponse;
   } catch (error: any) {
     notifications.hide('logging-spinner')
     let msg = '';
@@ -103,7 +76,7 @@ const useSignInWithEmail = async (email: string, password: string) => {
       message: msg,
       color: 'red'
     });
-    return false;
+    return null;
   }
 }
 
@@ -127,10 +100,6 @@ const useSignOut = async () => {
       withBorder: true,
       withCloseButton: true,
     });
-
-    // queryClient.setQueryData(["getUserAuth"], null);
-    // queryClient.invalidateQueries({ queryKey: ["getUserAuth"] });
-    useGetAuthStat();
   } catch (error) {
     console.log('Error: ', error);
     return error;
@@ -138,7 +107,6 @@ const useSignOut = async () => {
 }
 
 export {
-  useGetAuthStat,
   useSignUpWithEmail,
   useSignInWithEmail,
   useSignInWithGoogle,

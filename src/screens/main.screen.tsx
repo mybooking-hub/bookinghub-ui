@@ -1,5 +1,4 @@
 import { PerformanceResponse, useGetAllPerformance } from "src/api/performance.api";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import Spinner from "src/fallback-ui/spinner.ui";
 // import { HeaderTabs } from "src/components/main.header";
 import { HeroHeaderContent } from "src/components/hero.header";
@@ -39,8 +38,6 @@ function MainScreen() {
       <Container>
         <NewsLetterBanner />
       </Container>
-
-      <ReactQueryDevtools />
     </>
   );
 }

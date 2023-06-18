@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
     createStyles,
     Avatar,
@@ -9,7 +9,6 @@ import {
     rem,
     px,
     Button,
-    Loader
 } from '@mantine/core';
 import {
     IconLogout,
@@ -22,9 +21,11 @@ import {
     IconSwitchHorizontal,
     IconChevronDown,
 } from '@tabler/icons-react';
-import { useGetAuthStat, useSignOut } from "src/api/auth.api";
+import { useSignOut } from "src/api/auth.api";
 import { useNavigate } from "react-router-dom";
-import { queryClient } from "src/main";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "src/redux/store";
+import { invalidateAuthSlice } from "src/redux/slice/auth.slice";
 
 const useStyles = createStyles((theme) => ({
     user: {
@@ -59,38 +60,17 @@ export default function AuthBtn({ classFlag }: AuthBtnInterface) {
     const { classes, theme, cx } = useStyles();
     const [userMenuOpened, setUserMenuOpened] = useState(false);
     const navigate = useNavigate();
-
-    const user = useGetAuthStat();
-    // const { data: user, isLoading, error } = useGetAuthStat()
-    // console.log('Data: ', user)
-
-    const handleLogOut = async () => await useSignOut();
-
-    useEffect(() => {
-        queryClient.setQueryData(["getUserAuth"], null);
-        queryClient.invalidateQueries({ queryKey: ["getUserAuth"] });
-    }, [])
-
-    // if (error) {
-    //     return (
-    //         <Button type="button" variant="outline" >
-    //             {'ERROR: ' + error}
-    //         </Button>
-    //     )
-    // }
-
-    // if (isLoading) {
-    //     return (
-    //         <Button type="button" variant="outline" >
-    //             <Loader />
-    //         </Button>
-    //     )
-    // }
+    const user = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch();
+    const handleLogOut = async () => {
+        await useSignOut()
+        dispatch(invalidateAuthSlice());
+    };
 
     if (!user) {
         return (
             <Button type="button" variant="filled" color="blue" onClick={() => navigate("/authenticate")}>
-                Sign up / Register
+                Sign in / Register
             </Button>
         )
     }

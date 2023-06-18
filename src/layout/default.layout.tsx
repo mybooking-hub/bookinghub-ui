@@ -1,3 +1,4 @@
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { Outlet } from 'react-router-dom';
 import FooterLinks from 'src/components/footer.comp';
 import { HeaderTabs } from 'src/components/main.header';
@@ -14,6 +15,7 @@ export default function DefaultLayout() {
             />
             <Outlet />
             <FooterLinks data={[{ title: 'About', links: [{ label: 'Features', link: '/' }] }, { title: 'Contact', links: [{ label: 'Contact us', link: '/contact-us' }] }]} />
+            <ReactQueryDevtools />
         </>
     )
 }

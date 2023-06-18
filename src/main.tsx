@@ -15,6 +15,11 @@ import { Notifications, notifications } from "@mantine/notifications";
 
 export const queryClient = new QueryClient();
 
+import { persistStore } from 'redux-persist';
+import { PersistGate } from 'redux-persist/integration/react';
+import { store } from "./redux/store.ts";
+import { Provider } from "react-redux";
+
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
@@ -30,10 +35,14 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
           })
           return <ErrorBoundaryUI error={error} resetHandler={resetErrorBoundary} />
         }}>
-          <MantineProvider withCSSVariables withNormalizeCSS withGlobalStyles emotionCache={myCache}>
-            <Notifications />
-            <App />
-          </MantineProvider>
+          <Provider store={store}>
+            <PersistGate loading={null} persistor={persistStore(store)}>
+              <MantineProvider withCSSVariables withNormalizeCSS withGlobalStyles emotionCache={myCache}>
+                <Notifications />
+                <App />
+              </MantineProvider>
+            </PersistGate>
+          </Provider>
         </ErrorBoundary>
       </QueryClientProvider>
     </BrowserRouter>
