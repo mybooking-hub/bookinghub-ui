@@ -1,42 +1,42 @@
 import { createSlice } from '@reduxjs/toolkit'
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { User } from 'firebase/auth';
+import { User, UserInfo } from 'firebase/auth';
 import { auth } from 'src/hooks/useFirebase';
 
-// export type AuthState = User | null;
-const fnKeys = ["delete", "getIdToken", "getIdTokenResult", "reload", "toJson"];
-export type AuthState = Omit<User, "delete" | "getIdToken" | "getIdTokenResult" | "reload" | "toJson"> | null
+const userInfoKeys = ['displayName', 'email', 'phoneNumber', 'photoURL', 'providerId', 'uid'];
+// type Mutable<T> = { -readonly [P in keyof T]: T[P] }
 
-const generateState = (obj: Record<string, any>): AuthState => {
-    const filteredObject: Record<string, any> = {};
+const generateState = (obj: User): UserInfo => {
+    const filteredObject: UserInfo = Object.assign({}, obj);
 
-    const remKey = Object.keys(Object.assign({}, auth.currentUser)).filter((k) => !fnKeys.includes(k))
+    const userKeys = Object.keys(filteredObject);
 
-    remKey.forEach(key => {
-        if (obj.hasOwnProperty(key)) {
-            filteredObject[key] = obj[key];
-        }
-    });
+    userKeys.forEach((key) => {
+        if (!userInfoKeys.includes(key)) delete filteredObject[key as keyof UserInfo]
+    })
 
-    return filteredObject as AuthState;
+    return filteredObject;
 };
 
-const initialState: AuthState = auth.currentUser ? generateState(auth.currentUser) : null;
+const initialState: UserInfo | null = auth.currentUser ? generateState(auth.currentUser) : null;
 
 export const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
         invalidateAuthSlice: () => {
-            return auth.currentUser;
+            return null;
         },
         setUser: (_, action: PayloadAction<User | null>) => {
             return action.payload ? generateState(action.payload) : null;
+        },
+        rehydrateAuthSlice: () => {
+            return auth.currentUser ? generateState(auth.currentUser) : null;
         }
     },
 })
 
 // Action creators are generated for each case reducer function
-export const { setUser, invalidateAuthSlice } = authSlice.actions
+export const { setUser, invalidateAuthSlice, rehydrateAuthSlice } = authSlice.actions
 
 export default authSlice.reducer

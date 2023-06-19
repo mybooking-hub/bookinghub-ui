@@ -17,7 +17,7 @@ import {
 } from '@mantine/core';
 import { GoogleButton, TwitterButton } from "component/SocialButtons";
 
-import { useSignInWithEmail } from 'src/api/auth.api';
+import { useSignInWithEmail, useSignUpWithEmail } from 'src/api/auth.api';
 import { Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from 'src/redux/store';
@@ -51,7 +51,10 @@ export default function AuthenticationForm(props: PaperProps) {
             dispatch(setUser(signInUser?.user ?? null));
         }
         if (type === 'register') {
-
+            if (!visible) handler.open();
+            const signUpUser = await useSignUpWithEmail(form.values.email, form.values.password);
+            handler.close();
+            dispatch(setUser(signUpUser?.user ?? null));
         }
     }
 
