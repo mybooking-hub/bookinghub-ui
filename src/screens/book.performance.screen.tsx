@@ -219,7 +219,7 @@ export default function BookPerformance() {
                             Book Now
                         </Button>
 
-                        <Modal opened={showTheatre} onClose={close} title={`Available Theatres for booking ${value} tickets`} size={"70%"}>
+                        <Modal opened={showTheatre} onClose={close} title={`Available Theatres for booking ${value} tickets`} size={"90%"}>
                             <TheatreLayout data={mappedData} />
                         </Modal>
 
