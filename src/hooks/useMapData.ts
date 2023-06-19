@@ -12,6 +12,24 @@ const useMapData = <T>(dataMap: QuerySnapshot<DocumentData> | undefined) => {
     }
 }
 
+const useMapFilterData = <T>(dataMap: QuerySnapshot<DocumentData> | undefined, ids: string[]) => {
+    if (!dataMap) return {}
+    const mappedData: T[] | undefined = dataMap?.docs.map((d: QueryDocumentSnapshot<DocumentData>) => {
+        if (ids.includes(d.id)) {
+            return {
+                _id: d.id,
+                ...d.data()
+            } as T
+        }
+        return null
+    }).filter((item): item is T => item !== null);
+
+    return {
+        mapFilteredData: mappedData
+    }
+}
+
 export {
-    useMapData
+    useMapData,
+    useMapFilterData
 }

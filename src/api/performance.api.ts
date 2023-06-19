@@ -12,12 +12,16 @@ export interface PerformanceResponse {
     }[],
     ratings: number,
     synopsis: string | '',
+    seatStatus: {
+        theatreId: string,
+        plan: Record<string, number[]> | {}
+    }[],
     poster: string | undefined | '',
     date: {
         seconds: number,
         nanoseconds: number
     }
-    theatreId: string,
+    // theatreId: string,
     price: number,
 }
 
