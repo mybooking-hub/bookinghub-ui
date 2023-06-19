@@ -8,6 +8,7 @@ import {
     ActionIcon,
     rem,
     Button,
+    Modal,
 } from '@mantine/core';
 import { NavLink, Outlet, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
 import { PerformanceResponse, useGetPerformance } from 'src/api/performance.api';
@@ -17,6 +18,11 @@ import { useExtractData } from 'src/hooks/useExtractData';
 
 import { useRef, useState } from 'react';
 import { IconPlus, IconMinus } from '@tabler/icons-react';
+import { useSelector } from 'react-redux';
+import { RootState } from 'src/redux/store';
+import { notifications } from '@mantine/notifications';
+import { useDisclosure } from '@mantine/hooks';
+import TheatreLayout from 'src/components/TheatreLayout';
 
 const useStyles = createStyles((theme) => {
     return {
@@ -87,7 +93,11 @@ const useStyles = createStyles((theme) => {
             paddingLeft: `${theme.spacing.sm} !important`,
             height: rem(28),
             flex: 1,
-            color: theme.white
+            color: theme.white,
+            '&:disabled': {
+                backgroundColor: 'transparent',
+                color: theme.white
+            }
         },
 
         sectionHead: {
@@ -110,7 +120,9 @@ export default function BookPerformance() {
     // const params = useParams();
     const { pathname, state } = useLocation();
     const { classes } = useStyles();
-    const navigate = useNavigate()
+    const userAuth = useSelector((state: RootState) => state.auth);
+    const [showTheatre, { open, close }] = useDisclosure(false);
+    const navigate = useNavigate();
 
     if (!state?.pId) {
         return <Navigate to="/not-found" />
@@ -121,6 +133,21 @@ export default function BookPerformance() {
 
     const handlers = useRef<NumberInputHandlers>(null);
     const [value, setValue] = useState<number | ''>(1);
+
+    const handleTicketBook = () => {
+        if (!userAuth) {
+            notifications.show({
+                title: 'Oops !',
+                message: "You need to log in to be able to proceed forward with the booking. Click on the Sign in / Register button at the top right corner of the screen",
+                withBorder: true,
+                withCloseButton: true,
+                color: 'red'
+            });
+            close();
+        } else {
+            open();
+        }
+    }
 
     if (isLoading || !mappedData) {
         return (
@@ -172,6 +199,7 @@ export default function BookPerformance() {
                                     value={value}
                                     onChange={setValue}
                                     classNames={{ input: classes.input }}
+                                    disabled
                                 />
 
                                 <ActionIcon<'button'>
@@ -187,9 +215,17 @@ export default function BookPerformance() {
                             </div>
                         </div>
 
-                        <Button variant='gradient' className={classes.bookBtn}>
+                        <Button variant='gradient' className={classes.bookBtn} onClick={handleTicketBook}>
                             Book Now
                         </Button>
+
+                        <Modal opened={showTheatre} onClose={close} title={`Available Theatres for booking ${value} tickets`} size={"90%"}>
+                            <TheatreLayout data={mappedData} />
+                        </Modal>
+
+                        {/* {
+                            showTheatre && <TheatreLayout data={mappedData} />
+                        } */}
                     </Grid.Col>
                 </Grid>
             </Container>

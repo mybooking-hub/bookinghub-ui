@@ -18,8 +18,6 @@ const generateState = (obj: Record<string, any>): AuthState => {
         }
     });
 
-    console.log('Filtered Obj: ', filteredObject);
-
     return filteredObject as AuthState;
 };
 
