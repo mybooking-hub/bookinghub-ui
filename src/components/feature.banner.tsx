@@ -4,21 +4,21 @@ import { IconGauge, IconCookie, IconUser, IconMessage2, IconLock } from '@tabler
 export const MOCKDATA = [
     {
         icon: IconGauge,
-        title: 'Extreme performance',
+        title: 'Dolby Atoms Sound',
         description:
-            'This dust is actually a powerful poison that will even make a pro wrestler sick, Regice cloaks itself with frigid air of -328 degrees Fahrenheit',
+            'Perfect sound system and perfect ambience',
     },
     {
         icon: IconUser,
-        title: 'Privacy focused',
+        title: 'Always on time',
         description:
-            'People say it can run at the same speed as lightning striking, Its icy body is so cold, it will not melt even if it is immersed in magma',
+            'We are never late and shows are always on time',
     },
     {
         icon: IconCookie,
-        title: 'No third parties',
+        title: 'Hygiene focused',
         description:
-            'They’re popular, but they’re rare. Trainers who show them off recklessly may be targeted by thieves',
+            'We provide exceptional quality hygienic foods',
     },
     // {
     //     icon: IconLock,

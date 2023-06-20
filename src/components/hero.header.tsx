@@ -83,10 +83,7 @@ export function HeroHeaderContent() {
             />
             <Container className={classes.container}>
                 <Title className={classes.title}>A fully featured Personalized Booking Assistant</Title>
-                <Text className={classes.description} size="xl" mt="xl">
-                    Build fully functional accessible web applications faster than ever – Mantine includes
-                    more than 120 customizable components and hooks to cover you in any situation
-                </Text>
+                <Text className={classes.description} size="xl" mt="xl">One stop to find all your favorite show in our awesome theatres</Text>
 
                 <Button variant="gradient" size="xl" radius="xl" className={classes.control}>
                     Get started

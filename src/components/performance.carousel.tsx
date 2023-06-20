@@ -1,6 +1,6 @@
 import { Carousel } from '@mantine/carousel';
 import { useMediaQuery } from '@mantine/hooks';
-import { createStyles, Paper, Title, Button, useMantineTheme, rem, Badge } from '@mantine/core';
+import { createStyles, Paper, Title, Button, useMantineTheme, rem, Badge, Text } from '@mantine/core';
 import { PerformanceResponse } from 'src/api/performance.api';
 import { useNavigate } from 'react-router-dom';
 
@@ -136,15 +136,25 @@ export default function PerformanceCarousel({ data }: CarouselInterface) {
     ));
 
     return (
-        <Carousel
-            slideSize="33.33%"
-            breakpoints={[{ maxWidth: 'sm', slideSize: '100%', slideGap: 2 }]}
-            slideGap="xl"
-            align="start"
-            loop
-            slidesToScroll={mobile ? 1 : 2}
-        >
-            {slides}
-        </Carousel>
+        <>
+            <Text
+                variant="gradient"
+                gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+                sx={{ fontFamily: 'Greycliff CF, sans-serif', fontSize: '2rem', marginBottom: '0.5rem' }}
+                // ta="center"
+                // fz=""
+                fw={700}
+            >Trending Shows</Text>
+            <Carousel
+                slideSize="33.33%"
+                breakpoints={[{ maxWidth: 'sm', slideSize: '100%', slideGap: 2 }]}
+                slideGap="xl"
+                align="start"
+                loop
+                slidesToScroll={mobile ? 1 : 2}
+            >
+                {slides}
+            </Carousel>
+        </>
     );
 }
