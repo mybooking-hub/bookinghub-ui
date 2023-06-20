@@ -2,9 +2,18 @@ import { Button, ButtonProps, Group } from '@mantine/core';
 import { GithubIcon, DiscordIcon, TwitterIcon } from '@mantine/ds';
 import { GoogleIcon } from './GoogleIcon';
 import { FacebookIcon } from './FacebookIcon';
+import { useSignInWithGoogle } from 'src/api/auth.api';
+import { useDispatch } from 'react-redux';
+import { setUser } from 'src/redux/slice/auth.slice';
 
 export function GoogleButton(props: ButtonProps) {
-    return <Button leftIcon={<GoogleIcon />} variant="default" color="gray" {...props} />;
+    const dispatch = useDispatch();
+
+    const handleGoogleLogin = async () => {
+        const signInUser = await useSignInWithGoogle();
+        if (signInUser) dispatch(setUser(signInUser?.user ?? null));
+    }
+    return <Button onClick={handleGoogleLogin} leftIcon={<GoogleIcon />} variant="default" color="gray" {...props} />;
 }
 
 export function FacebookButton(props: ButtonProps) {

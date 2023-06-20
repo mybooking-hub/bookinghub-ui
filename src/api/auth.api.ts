@@ -17,6 +17,11 @@ const useSignUpWithEmail = async (email: string, password: string) => {
   try {
     const signUpResponse = await createUserWithEmailAndPassword(auth, email, password);
     notifications.hide('logging-spinner');
+    notifications.show({
+      title: `Welcome to the My Seatings platform, ${signUpResponse.user.displayName ?? signUpResponse.user.email} ! 🥳`,
+      message: 'You can start navigating around our platform for watch for performance and ticket booking 😇',
+      withBorder: true,
+    })
     return signUpResponse;
   } catch (error: any) {
     notifications.hide('logging-spinner')
@@ -55,6 +60,11 @@ const useSignInWithEmail = async (email: string, password: string) => {
   try {
     const signInResponse = await signInWithEmailAndPassword(auth, email, password);
     notifications.hide('logging-spinner');
+    notifications.show({
+      title: `Welcome back to the My Seatings platform, ${signInResponse.user.displayName ?? signInResponse.user.email} ! 🥳`,
+      message: 'You can start navigating around our platform for watch for performance and ticket booking 😇',
+      withBorder: true,
+    })
     return signInResponse;
   } catch (error: any) {
     notifications.hide('logging-spinner')
@@ -82,10 +92,31 @@ const useSignInWithEmail = async (email: string, password: string) => {
 
 const useSignInWithGoogle = async () => {
   try {
-    await signInWithPopup(auth, googleProvider);
-  } catch (error) {
-    console.log('Error: ', error)
-    return error;
+    const signInResponse = await signInWithPopup(auth, googleProvider);
+    notifications.show({
+      title: `Welcome to the My Seatings platform, ${signInResponse.user.displayName ?? signInResponse.user.email} ! 🥳`,
+      message: 'You can start navigating around our platform for watch for performance and ticket booking 😇',
+      withBorder: true,
+      color: "green",
+    })
+    return signInResponse;
+  } catch (error: any) {
+    let msg = '';
+    // Handle the registration error
+    if (error?.code === 'auth/account-exists-with-different-credential') {
+      // User already registered with a different provider, display appropriate message or take necessary action
+      msg = 'User already registered with a different provider';
+    } else {
+      // Other registration errors, display a generic error message or handle as needed
+      msg = `Registration error:', ${error.message}`;
+    }
+
+    notifications.show({
+      title: 'Error !',
+      message: msg,
+      color: 'red'
+    });
+    return null;
   }
 }
 
@@ -94,7 +125,7 @@ const useSignOut = async () => {
     await signOut(auth);
     notifications.show({
       title: "Bye bye !",
-      message: 'Loggged out successfully !',
+      message: 'Hope we will get to see you soon 😢. Loggged out successfully !',
       autoClose: true,
       color: 'green',
       withBorder: true,
