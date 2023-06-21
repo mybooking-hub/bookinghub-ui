@@ -2,7 +2,7 @@ name: CI CD Pipeline for UI Deployment
 
 on:
   push:
-    branches: ["auto-test"]
+    branches: ["main"]
 
 jobs:
   build:
@@ -27,7 +27,23 @@ jobs:
 
       - name: Install dependencies, build and preview UI
         working-directory: ui
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
         run: |
+          echo "VITE_API_KEY=${FIREBASE_API_KEY}" > .env
+          echo "VITE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}" >> .env
+          echo "VITE_PROJECT_ID=${FIREBASE_PROJECT_ID}" >> .env
+          echo "VITE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}" >> .env
+          echo "VITE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}" >> .env
+          echo "VITE_APP_ID=${FIREBASE_APP_ID}" >> .env
+          echo "VITE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}" >> .env
+
           npm install
           npm run build
           npm run preview
@@ -57,14 +73,41 @@ jobs:
           publish_branch: allure-report
           commit_message: Deployed Allure Report v.${{github.run_number}} to GitHub Pages
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
-      - name: Build and push
-        uses: docker/build-push-action@v4
-        with:
-          push: true
-          tags: bitcode001/myseatings-ui:${{github.run_number}}, bitcode001/myseatings-ui:latest
+      - name: Build and Push Docker Image
+        env:
+          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
+          FIREBASE_AUTH_DOMAIN: ${{ secrets.FIREBASE_AUTH_DOMAIN }}
+          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FIREBASE_STORAGE_BUCKET: ${{ secrets.FIREBASE_STORAGE_BUCKET }}
+          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
+          FIREBASE_MEASUREMENT_ID: ${{ secrets.FIREBASE_MEASUREMENT_ID }}
+        run: |
+          echo "VITE_API_KEY=${FIREBASE_API_KEY}" > .env
+          echo "VITE_AUTH_DOMAIN=${FIREBASE_AUTH_DOMAIN}" >> .env
+          echo "VITE_PROJECT_ID=${FIREBASE_PROJECT_ID}" >> .env
+          echo "VITE_STORAGE_BUCKET=${FIREBASE_STORAGE_BUCKET}" >> .env
+          echo "VITE_MESSAGING_SENDER_ID=${FIREBASE_MESSAGING_SENDER_ID}" >> .env
+          echo "VITE_APP_ID=${FIREBASE_APP_ID}" >> .env
+          echo "VITE_MEASUREMENT_ID=${FIREBASE_MEASUREMENT_ID}" >> .env
+
+          docker buildx build \
+            --file Dockerfile \
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:${{github.run_number}} \ 
+            --tag ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:latest \
+            --push .
+
+      # - name: Build and push
+      #   uses: docker/build-push-action@v4
+      #   with:
+      #     push: true
+      #     tags: ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:${{github.run_number}}, ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:latest

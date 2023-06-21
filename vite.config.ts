@@ -10,6 +10,7 @@ export default defineConfig({
   plugins: [react(), viteTsconfigPaths(), svgrPlugin()],
   build: {
     outDir: "build",
+    emptyOutDir: true,
   },
   base: "",
   server: {
