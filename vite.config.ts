@@ -17,7 +17,7 @@ export default defineConfig({
     watch: {
       usePolling: true
     },
-    open: true,
+    open: false,
     host: true, // Need for docker container port mapping
     strictPort: true,
     port: 3173
