@@ -11,8 +11,17 @@ export default defineConfig({
   build: {
     outDir: "build",
   },
+  base: "",
   server: {
+    watch: {
+      usePolling: true
+    },
     open: true,
-    // port: 3000
+    host: true, // Need for docker container port mapping
+    strictPort: true,
+    port: 3173
   },
-})
+  preview: {
+    port: 3173
+  }
+});
