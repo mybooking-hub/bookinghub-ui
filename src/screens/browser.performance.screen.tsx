@@ -2,7 +2,11 @@ import { useState } from "react";
 import { Box, Container, Grid, TextInput, ActionIcon, useMantineTheme } from "@mantine/core";
 import { IconSearch, IconArrowRight, IconArrowLeft } from '@tabler/icons-react';
 import { PerformanceCard } from "src/components/performance.comp";
-import { useGetPerformance, PerformanceResponse, useGetAllPerformance } from "src/api/performance.api";
+import {
+    // useGetPerformance, 
+    PerformanceResponse,
+    useGetAllPerformance
+} from "src/api/performance.api";
 import { useMapData } from "src/hooks/useMapData";
 import { useDebouncedValue } from "@mantine/hooks";
 
@@ -10,7 +14,11 @@ import { useNavigate } from 'react-router-dom';
 
 export default function BrowsePerformance() {
     const theme = useMantineTheme();
-    const { data, error, isLoading } = useGetAllPerformance();
+    const {
+        data,
+        // error, 
+        // isLoading 
+    } = useGetAllPerformance();
     const { mappedData } = useMapData<PerformanceResponse>(data);
 
     const [value, setValue] = useState<string>('');

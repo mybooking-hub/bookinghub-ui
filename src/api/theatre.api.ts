@@ -1,4 +1,4 @@
-import { collection, doc, getDoc, getDocs, query, where } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs } from "firebase/firestore";
 import { useQuery } from "@tanstack/react-query";
 
 import { firebaseDB } from "hooks/useFirebase";

@@ -5,7 +5,6 @@ import {
     Group,
     Burger,
     rem,
-    px
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { useWindowScroll } from '@mantine/hooks';

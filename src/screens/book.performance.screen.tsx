@@ -10,7 +10,11 @@ import {
     Button,
     Modal,
 } from '@mantine/core';
-import { NavLink, Outlet, useNavigate, useLocation, useParams, Navigate } from 'react-router-dom';
+import {
+    // useNavigate, 
+    useLocation,
+    Navigate
+} from 'react-router-dom';
 import { PerformanceResponse, useGetPerformance } from 'src/api/performance.api';
 import { PerformanceCard } from 'src/components/performance.comp';
 import Spinner from 'src/fallback-ui/spinner.ui';
@@ -118,11 +122,11 @@ const max = 20;
 
 export default function BookPerformance() {
     // const params = useParams();
-    const { pathname, state } = useLocation();
+    const { state } = useLocation();
     const { classes } = useStyles();
     const userAuth = useSelector((state: RootState) => state.auth);
     const [showTheatre, { open, close }] = useDisclosure(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
     if (!state?.pId) {
         return <Navigate to="/not-found" />
@@ -171,7 +175,7 @@ export default function BookPerformance() {
             <Container className={classes.remRoot}>
                 <Grid>
                     <Grid.Col span={4}>
-                        <PerformanceCard noAction category={mappedData.genre} image={mappedData.poster!} title={mappedData.name} />
+                        <PerformanceCard category={mappedData.genre} image={mappedData.poster!} title={mappedData.name} />
                     </Grid.Col>
                     <Grid.Col span={8} style={{ zIndex: 1, padding: "0 4rem" }}>
                         <Text className={classes.sectionHead}>Synopsis</Text>

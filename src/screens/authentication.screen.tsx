@@ -15,7 +15,7 @@ import {
     Container,
     LoadingOverlay,
 } from '@mantine/core';
-import { GoogleButton, TwitterButton } from "component/SocialButtons";
+import { GoogleButton } from "component/SocialButtons";
 
 import { useSignInWithEmail, useSignUpWithEmail } from 'src/api/auth.api';
 import { Navigate } from 'react-router-dom';

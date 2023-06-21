@@ -11,14 +11,14 @@ import {
     Button,
 } from '@mantine/core';
 import {
+    // IconHeart,
+    // IconStar,
+    // IconMessage,
+    // IconPlayerPause,
+    // IconTrash,
+    // IconSwitchHorizontal,
     IconLogout,
-    IconHeart,
-    IconStar,
-    IconMessage,
     IconSettings,
-    IconPlayerPause,
-    IconTrash,
-    IconSwitchHorizontal,
     IconChevronDown,
 } from '@tabler/icons-react';
 import { useSignOut } from "src/api/auth.api";

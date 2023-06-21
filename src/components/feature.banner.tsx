@@ -1,5 +1,5 @@
 import { ThemeIcon, Text, Title, Container, SimpleGrid, createStyles, rem } from '@mantine/core';
-import { IconGauge, IconCookie, IconUser, IconMessage2, IconLock } from '@tabler/icons-react';
+import { IconGauge, IconCookie, IconUser } from '@tabler/icons-react';
 
 export const MOCKDATA = [
     {

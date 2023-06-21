@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 // import image from 'assets/icons/image.svg';
 import ErrorLogo from 'src/assets/icons/image.svg';
-import { NavLink, Outlet, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const useStyles = createStyles((theme) => ({
     root: {

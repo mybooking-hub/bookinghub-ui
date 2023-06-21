@@ -4,7 +4,7 @@ import { IconBrandTwitter, IconBrandYoutube, IconBrandInstagram } from '@tabler/
 
 import { ReactComponent as BrandLogo } from 'src/assets/icons/brand2.svg';
 
-import { NavLink, Outlet, useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useWindowScroll } from '@mantine/hooks';
 
 const useStyles = createStyles((theme) => ({

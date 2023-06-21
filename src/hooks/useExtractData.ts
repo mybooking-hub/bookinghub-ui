@@ -1,4 +1,4 @@
-import { DocumentData, DocumentSnapshot, QueryDocumentSnapshot, QuerySnapshot } from "firebase/firestore"
+import { DocumentData, DocumentSnapshot } from "firebase/firestore"
 
 const useExtractData = <T>(dataExtract: DocumentSnapshot<DocumentData> | undefined) => {
     if (!dataExtract) return {}

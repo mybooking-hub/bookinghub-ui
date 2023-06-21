@@ -51,7 +51,7 @@ interface PerformanceCardProps {
     noAction?: Boolean
 }
 
-export function PerformanceCard({ image, title, category, handleOnClick, noAction = false }: PerformanceCardProps) {
+export function PerformanceCard({ image, title, category, handleOnClick }: PerformanceCardProps) {
     const { classes } = useStyles();
 
     return (
