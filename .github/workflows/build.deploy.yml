@@ -46,7 +46,7 @@ jobs:
 
           npm install
           npm run build
-          npm run preview
+          npm run preview &
 
       - name: Checkout UI-Automation repository
         uses: actions/checkout@v2
