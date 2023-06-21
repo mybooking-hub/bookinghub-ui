@@ -77,7 +77,7 @@ jobs:
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
 
       - name: Create temporary .env file
         run: |
@@ -95,8 +95,6 @@ jobs:
           context: ./ui
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:${{github.run_number}}, ${{ secrets.DOCKERHUB_USERNAME }}/myseatings-ui:latest
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Cleanup temporary .env file
         run: |
