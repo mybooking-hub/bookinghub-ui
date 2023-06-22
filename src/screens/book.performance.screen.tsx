@@ -136,7 +136,7 @@ export default function BookPerformance() {
     const { mappedData } = useExtractData<PerformanceResponse>(data);
 
     const handlers = useRef<NumberInputHandlers>(null);
-    const [value, setValue] = useState<number | 0>(1);
+    const [value, setValue] = useState<number | ''>(1);
 
     const handleTicketBook = () => {
         if (!userAuth) {
@@ -224,7 +224,7 @@ export default function BookPerformance() {
                         </Button>
 
                         <Modal opened={showTheatre} onClose={close} size={"90%"}>
-                            <CustomStepper data={mappedData} seatNeeded={value} />
+                            <CustomStepper data={mappedData} seatNeeded={Number(value)} />
                         </Modal>
                     </Grid.Col>
                 </Grid>
