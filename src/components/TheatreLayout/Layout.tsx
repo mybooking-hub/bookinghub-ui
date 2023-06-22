@@ -1,9 +1,12 @@
 import { Button, Card, ScrollArea, Loader, createStyles, rem, Badge, Text } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+import { IconHttpDelete } from "@tabler/icons-react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { PerformanceResponse } from "src/api/performance.api";
 import { TheatreResponse, useGetAllTheatre } from "src/api/theatre.api";
 import { useMapFilterData } from "src/hooks/useMapData";
+// import CustomStepper from "./Stepper";
+import useAlgorithm from "src/hooks/useAlgorithm";
 
 const useStyles = createStyles((theme) => {
     return {
@@ -67,12 +70,14 @@ const useStyles = createStyles((theme) => {
 })
 
 interface TheatreLayoutInterface {
-    data: Pick<PerformanceResponse, "seatStatus">
+    data: Pick<PerformanceResponse, "seatStatus">,
+    seatNeeded: number,
+    clearStep: Dispatch<SetStateAction<boolean>>,
 }
 
 const getRange = (max: number) => Array.from({ length: max }, (_, index) => 1 + index * 1);
 
-export default function TheatreLayout({ data }: TheatreLayoutInterface) {
+export default function TheatreLayout({ data, seatNeeded, clearStep }: TheatreLayoutInterface) {
     const { classes } = useStyles();
     const { data: theatreData, isLoading } = useGetAllTheatre();
     const { mapFilteredData } = useMapFilterData<TheatreResponse>(theatreData, data.seatStatus.map(ds => ds.theatreId));
@@ -80,12 +85,99 @@ export default function TheatreLayout({ data }: TheatreLayoutInterface) {
     // const [tempSelection, setTempSelection] = useState<Record<string, number[]>[] | []>([])
     const [tempSelection, setTempSelection] = useState<string[] | []>([])
 
+    const {
+        // checkRequestedSeats, 
+        // checkSingleSeatGap, 
+        // remainingSeats,
+        checkGapBetweenSelection
+    } = useAlgorithm();
+
+    // const fetchEnumereatedSeat = () => {
+    //     if (!mapFilteredData) return
+    //     const seatPlanOfSelectedTheatre = mapFilteredData?.filter(el => el._id === selectedTheatre)[0].seatPlan
+    //     const seatKeys = Object.keys(seatPlanOfSelectedTheatre).sort();
+    //     return seatKeys.reduce((acc, sk) => {
+    //         const seatPlanOfSelectedKey = seatPlanOfSelectedTheatre[sk];
+    //         const seatPlanOfSelectedKeyRange = getRange(seatPlanOfSelectedKey!);
+    //         return {
+    //             ...acc,
+    //             [sk]: seatPlanOfSelectedKeyRange
+    //         }
+    //     }, {})
+    // }
+
+    const handleBookings = () => {
+        // console.log('Parameters');
+        // console.log('ENUMERATED SEAT: ', fetchEnumereatedSeat())
+        // console.log('TEMP SELECTION: ', tempSelection);
+        // console.log('SEAT PLAN: ', data.seatStatus.filter(dss => dss.theatreId === selectedTheatre)[0].plan);
+        // console.log('Parameters');
+        // console.log('=================================');
+
+        // const hasSingleSeatGap = checkSingleSeatGap(tempSelection, fetchEnumereatedSeat() as Record<string, number[]>);
+        // // const hasValidRequestedSeats = checkRequestedSeats(tempSelection, data.seatStatus.filter(dss => dss.theatreId === selectedTheatre)[0].plan);
+        // const isSeatRemaining = remainingSeats(tempSelection, data.seatStatus.filter(dss => dss.theatreId === selectedTheatre)[0].plan, fetchEnumereatedSeat() as Record<string, number[]>);
+        const gapBetweenSelection = checkGapBetweenSelection(tempSelection);
+
+        // console.log('hasSingleSeatGap', hasSingleSeatGap);
+        // // console.log('hasValidRequestedSeats', hasValidRequestedSeats);
+        const isAllValid = Object.values(gapBetweenSelection).every(arr => arr.every(el => el === false));
+        // console.log("gapBetweenSelection: ", gapBetweenSelection);
+        // console.log('isSeatRemaining', isSeatRemaining);
+        // console.log("isAllValid: ", isAllValid);
+        // const isAllValid = Object.values(hasSingleSeatGap).every(el => el === true);
+        // every(el => el === true) && hasValidRequestedSeats.every(el => el === true) && isSeatRemaining.every(el => el === true) && gapBetweenSelection.every(el => el === true);
+
+        if (seatNeeded !== tempSelection.length) {
+            notifications.show({
+                title: 'Sorry 😞!',
+                message: 'Please select seats correctly!',
+                withBorder: true,
+                color: "red",
+                loading: true
+            })
+            return;
+        }
+
+        if (!isAllValid && seatNeeded > 1) {
+            notifications.show({
+                title: 'Sorry 😞!',
+                message: 'Please select seats correctly!',
+                withBorder: true,
+                color: "red",
+                loading: true
+            })
+            return;
+        } else {
+            notifications.show({
+                title: 'Great 🥳!',
+                message: 'Your tickets will be issued soon!',
+                withBorder: true,
+                color: "green",
+                loading: true
+            })
+            clearStep(true);
+        }
+
+        // notifications.show({
+        //     title: 'Great 🥳!',
+        //     // message: 'Your tickets will be issued soon, there appears be a problem with the server. Just bare with us!',
+        //     message: 'Thank you very much for using our platform. It appears that the system is going through some hard times so we could not process your action 😞. Come back Later !',
+        //     withBorder: true,
+        //     color: "green",
+        //     loading: true
+        // })
+    }
+
+
     if (isLoading) {
         <Loader color="blue" variant="bars" size={"xl"} />
     }
 
     const storeTempSelection = (sk: string, sp: number) => {
         const seatVal = sk.concat(String(sp));
+        if (tempSelection.length === seatNeeded) return;
+
         if (tempSelection.length > 0 && (tempSelection as string[]).includes(seatVal)) {
             const newState = tempSelection.filter(el => el !== seatVal);
             setTempSelection(newState);
@@ -121,7 +213,7 @@ export default function TheatreLayout({ data }: TheatreLayoutInterface) {
                 {
                     getRange(seatPlan[sk]).map(sp => (
                         <div
-                            onClick={() => storeTempSelection(sk, sp)}
+                            onClick={() => isBooked(sk, sp) ? null : storeTempSelection(sk, sp)}
                             className={
                                 `
                                 ${classes.seat} 
@@ -139,16 +231,7 @@ export default function TheatreLayout({ data }: TheatreLayoutInterface) {
         ))
     }
 
-    const handleBookings = () => {
-        notifications.show({
-            title: 'Great 🥳!',
-            // message: 'Your tickets will be issued soon, there appears be a problem with the server. Just bare with us!',
-            message: 'Thank you very much for using our platform. It appears that the system is going through some hard times so we could not process your action 😞. Come back Later !',
-            withBorder: true,
-            color: "green",
-            loading: true
-        })
-    }
+    const handleClearSelection = () => setTempSelection([])
 
     return (
         <>
@@ -202,7 +285,14 @@ export default function TheatreLayout({ data }: TheatreLayoutInterface) {
             {
                 tempSelection.length > 0 &&
                 <>
-                    <Text>Your Selection</Text>
+                    <Card style={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                    }}>
+                        <Text className={classes.label} style={{ margin: "0 1rem 0 0" }}>Selected Seats</Text>
+                        <Button onClick={handleClearSelection} variant="outline" leftIcon={<IconHttpDelete />}>Clear Selection</Button>
+                    </Card>
                     <Card className={classes.seatGrid}>
                         {
                             tempSelection &&
@@ -213,10 +303,9 @@ export default function TheatreLayout({ data }: TheatreLayoutInterface) {
                     </Card>
 
                     <Button variant="gradient" type="button" onClick={handleBookings}>
-                        Make your Booking
+                        Verify your Booking
                     </Button>
                 </>
-
             }
         </>
     )

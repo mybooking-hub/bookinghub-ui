@@ -26,7 +26,7 @@ import { useSelector } from 'react-redux';
 import { RootState } from 'src/redux/store';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
-import TheatreLayout from 'src/components/TheatreLayout';
+import CustomStepper from 'src/components/TheatreLayout/Stepper';
 
 const useStyles = createStyles((theme) => {
     return {
@@ -136,7 +136,7 @@ export default function BookPerformance() {
     const { mappedData } = useExtractData<PerformanceResponse>(data);
 
     const handlers = useRef<NumberInputHandlers>(null);
-    const [value, setValue] = useState<number | ''>(1);
+    const [value, setValue] = useState<number | 0>(1);
 
     const handleTicketBook = () => {
         if (!userAuth) {
@@ -223,13 +223,9 @@ export default function BookPerformance() {
                             Book Now
                         </Button>
 
-                        <Modal opened={showTheatre} onClose={close} title={`Available Theatres for booking ${value} tickets`} size={"90%"}>
-                            <TheatreLayout data={mappedData} />
+                        <Modal opened={showTheatre} onClose={close} size={"90%"}>
+                            <CustomStepper data={mappedData} seatNeeded={value} />
                         </Modal>
-
-                        {/* {
-                            showTheatre && <TheatreLayout data={mappedData} />
-                        } */}
                     </Grid.Col>
                 </Grid>
             </Container>

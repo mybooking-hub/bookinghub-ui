@@ -10,7 +10,7 @@ import BrowsePerformance from "screens/browser.performance.screen";
 import BookPerformance from "screens/book.performance.screen";
 import AuthenticationForm from "screens/authentication.screen";
 
-const MainScreenApp = lazy(() => import("screens/main.screen"))
+const MainScreenApp = lazy(() => import("screens/main.screen"));
 
 function App() {
   return (
